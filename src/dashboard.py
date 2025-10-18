@@ -210,9 +210,47 @@ st.markdown("""
         height: auto;
     }
     
-    /* Better scrolling on mobile */
+    /* Better scrolling and prevent text cutoff */
     .element-container {
         overflow-x: hidden;
+        overflow-y: visible;
+    }
+    
+    /* Ensure all content is visible */
+    .main .block-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+        max-width: 100%;
+    }
+    
+    /* Fix expander content visibility */
+    .streamlit-expanderContent {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+    
+    /* Ensure detailed analysis sections are fully visible */
+    .detail-section {
+        overflow: visible;
+        margin-bottom: 2rem;
+    }
+    
+    /* Fix chart containers */
+    .stPlotlyChart {
+        overflow: visible !important;
+    }
+    
+    /* Better spacing for mobile */
+    @media only screen and (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        /* Ensure expanders don't cut off content */
+        .streamlit-expanderContent {
+            padding-bottom: 2rem;
+        }
     }
     
     /* Mobile-friendly metrics */
@@ -237,6 +275,21 @@ st.markdown("""
         table {
             font-size: 0.8rem !important;
         }
+    }
+    
+    /* Ensure expander content is fully visible */
+    .streamlit-expanderContent > div {
+        overflow: visible !important;
+    }
+    
+    /* Better spacing for all sections */
+    .stMarkdown {
+        margin-bottom: 1rem;
+    }
+    
+    /* Fix any potential cutoff issues */
+    .main .block-container > div {
+        overflow: visible !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -298,16 +351,18 @@ class NFLDashboard:
         home_info = NFL_TEAMS.get(home_team, {'name': home_team, 'color': '#cccccc', 'logo': ''})
         away_info = NFL_TEAMS.get(away_team, {'name': away_team, 'color': '#cccccc', 'logo': ''})
         
-        # Header with team logos
+        # Header with team logos - responsive layout
         st.markdown("### 📊 Detailed Prediction Analysis")
         
+        # Use responsive columns that stack on mobile
         col1, col2, col3 = st.columns([1, 1, 1])
+        
         with col1:
             st.markdown(f"""
-                <div style="text-align: center;">
+                <div style="text-align: center; margin-bottom: 1rem;">
                     <img src="{away_info['logo']}" width="80" height="80" style="margin-bottom: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: {away_info['color']};">{away_team}</div>
-                    <div style="color: #666;">{away_info['name']}</div>
+                    <div style="color: #666; font-size: 0.9rem;">{away_info['name']}</div>
                 </div>
             """, unsafe_allow_html=True)
         
@@ -320,10 +375,10 @@ class NFLDashboard:
         
         with col3:
             st.markdown(f"""
-                <div style="text-align: center;">
+                <div style="text-align: center; margin-bottom: 1rem;">
                     <img src="{home_info['logo']}" width="80" height="80" style="margin-bottom: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: {home_info['color']};">{home_team}</div>
-                    <div style="color: #666;">{home_info['name']}</div>
+                    <div style="color: #666; font-size: 0.9rem;">{home_info['name']}</div>
                 </div>
             """, unsafe_allow_html=True)
         
@@ -377,16 +432,15 @@ class NFLDashboard:
                     st.markdown("<div style='margin: 1.5rem 0; border-bottom: 1px solid #e0e0e0;'></div>", 
                                unsafe_allow_html=True)
                 
-                # Metric title with tooltip
+                # Metric title with tooltip - ensure full visibility
                 st.markdown(f"""
-                    <div style="text-align: center; margin-bottom: 0.5rem;">
-                        <span style="font-size: 1.1rem; font-weight: bold;" title="{description}">
+                    <div style="text-align: center; margin-bottom: 1rem; padding: 0.5rem;">
+                        <div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem;" title="{description}">
                             {label} ℹ️
-                        </span>
-                        <br/>
-                        <span style="font-size: 0.85rem; color: #666; font-style: italic;">
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; font-style: italic; line-height: 1.3;">
                             {description}
-                        </span>
+                        </div>
                     </div>
                 """, unsafe_allow_html=True)
                 
@@ -394,15 +448,15 @@ class NFLDashboard:
                 
                 with col1:
                     st.markdown(f"""
-                        <div style="text-align: center;">
+                        <div style="text-align: center; margin-bottom: 0.5rem;">
                             <img src="{away_info['logo']}" width="30" height="30" style="margin-bottom: 0.25rem;">
-                            <div style="font-weight: bold; color: {away_info['color']};">{away_team}</div>
+                            <div style="font-weight: bold; color: {away_info['color']}; font-size: 0.9rem;">{away_team}</div>
                         </div>
                     """, unsafe_allow_html=True)
                     st.metric("", f"{away_val:.3f}" if away_val < 10 else f"{away_val:.1f}")
                 
                 with col2:
-                    # Create comparison bar
+                    # Create comparison bar with better spacing
                     max_val = max(abs(home_val), abs(away_val))
                     if max_val > 0:
                         home_pct = (home_val / max_val) * 50 if direction == 'higher_better' else ((max_val - home_val) / max_val) * 50
@@ -432,8 +486,8 @@ class NFLDashboard:
                         
                         fig.update_layout(
                             barmode='group',
-                            height=80,
-                            margin=dict(l=0, r=0, t=10, b=0),
+                            height=100,
+                            margin=dict(l=0, r=0, t=20, b=20),
                             xaxis=dict(showticklabels=False, showgrid=False),
                             yaxis=dict(showticklabels=False),
                             paper_bgcolor='rgba(0,0,0,0)',
@@ -444,12 +498,15 @@ class NFLDashboard:
                 
                 with col3:
                     st.markdown(f"""
-                        <div style="text-align: center;">
+                        <div style="text-align: center; margin-bottom: 0.5rem;">
                             <img src="{home_info['logo']}" width="30" height="30" style="margin-bottom: 0.25rem;">
-                            <div style="font-weight: bold; color: {home_info['color']};">{home_team}</div>
+                            <div style="font-weight: bold; color: {home_info['color']}; font-size: 0.9rem;">{home_team}</div>
                         </div>
                     """, unsafe_allow_html=True)
                     st.metric("", f"{home_val:.3f}" if home_val < 10 else f"{home_val:.1f}")
+                
+                # Add spacing after each metric
+                st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
         
         # Feature differentials (what the model actually sees)
         st.markdown("<div style='margin: 2rem 0; border-bottom: 2px solid #e0e0e0;'></div>", 
@@ -515,10 +572,10 @@ class NFLDashboard:
                         text=f"<b>Top 10 Feature Advantages</b><br><sub>+ favors {home_team}, - favors {away_team}</sub>",
                         font=dict(size=16)
                     ),
-                    height=450,
+                    height=500,
                     xaxis_title="Differential Value",
                     showlegend=False,
-                    margin=dict(l=150, r=50, t=80, b=50),
+                    margin=dict(l=180, r=80, t=100, b=80),
                     paper_bgcolor='rgba(248,249,250,0.5)',
                     plot_bgcolor='rgba(255,255,255,1)',
                     xaxis=dict(
@@ -621,16 +678,19 @@ class NFLDashboard:
             # Probability bar
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
             
-            # Info row
+            # Info row with better spacing
             col_a, col_b, col_c = st.columns(3)
             with col_a:
-                st.markdown(f"<div style='text-align:center; color:white;'><strong>Winner</strong><br/>{predicted_winner}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; color:white; padding: 0.5rem;'><strong>Winner</strong><br/>{predicted_winner}</div>", unsafe_allow_html=True)
             with col_b:
-                st.markdown(f"<div style='text-align:center; color:white;'><strong>Confidence</strong><br/>{confidence:.1%}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='text-align:center; color:white; padding: 0.5rem;'><strong>Confidence</strong><br/>{confidence:.1%}</div>", unsafe_allow_html=True)
             with col_c:
                 game_date = game.get('gameday', 'TBD')
                 if pd.notna(game_date):
-                    st.markdown(f"<div style='text-align:center; color:white;'><strong>Date</strong><br/>{game_date}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='text-align:center; color:white; padding: 0.5rem;'><strong>Date</strong><br/>{game_date}</div>", unsafe_allow_html=True)
+            
+            # Add bottom margin to prevent cutoff
+            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
             
             # Expandable details button
             with st.expander("🔍 View Detailed Analysis"):
