@@ -1,0 +1,86 @@
+# NFL Prediction Model Configuration
+
+# Data Settings
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  features_dir: "data/features"
+  start_season: 2010  # Full dataset for best predictions
+  end_season: 2024
+
+# Feature Engineering
+features:
+  rolling_window: 4  # Number of games for rolling averages
+  min_games: 3       # Minimum games required for stats
+  include_advanced: true  # Include ELO, EPA, etc.
+
+# Model Settings
+model:
+  target: "home_team_win"
+  test_size: 0.2
+  random_state: 42
+  cv_folds: 5
+  models:
+    - "logistic_regression"
+    - "random_forest"
+    # - "xgboost"  # Requires libomp: brew install libomp
+  save_dir: "models"
+
+# Model Hyperparameters
+hyperparameters:
+  logistic_regression:
+    C: 1.0
+    max_iter: 1000
+    class_weight: "balanced"
+  
+  random_forest:
+    n_estimators: 200
+    max_depth: 10
+    min_samples_split: 10
+    min_samples_leaf: 4
+    class_weight: "balanced"
+  
+  xgboost:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    scale_pos_weight: 1
+
+# Prediction Settings
+predictions:
+  output_dir: "predictions"
+  export_formats:
+    - "json"
+    - "csv"
+
+# Dashboard Settings
+dashboard:
+  title: "NFL Game Prediction Dashboard"
+  port: 8501
+  theme: "dark"
+
+# API Settings
+api:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  api_key_required: false
+
+# Performance Metrics
+metrics:
+  primary: "roc_auc"
+  track:
+    - "accuracy"
+    - "roc_auc"
+    - "log_loss"
+    - "precision"
+    - "recall"
+    - "f1_score"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
