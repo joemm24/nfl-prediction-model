@@ -27,39 +27,101 @@ st.set_page_config(
 )
 
 
-# Custom CSS
+# NFL Team Colors and Logos
+NFL_TEAMS = {
+    'ARI': {'name': 'Cardinals', 'color': '#97233F', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png'},
+    'ATL': {'name': 'Falcons', 'color': '#A71930', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/atl.png'},
+    'BAL': {'name': 'Ravens', 'color': '#241773', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png'},
+    'BUF': {'name': 'Bills', 'color': '#00338D', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png'},
+    'CAR': {'name': 'Panthers', 'color': '#0085CA', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png'},
+    'CHI': {'name': 'Bears', 'color': '#0B162A', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png'},
+    'CIN': {'name': 'Bengals', 'color': '#FB4F14', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png'},
+    'CLE': {'name': 'Browns', 'color': '#311D00', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png'},
+    'DAL': {'name': 'Cowboys', 'color': '#003594', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png'},
+    'DEN': {'name': 'Broncos', 'color': '#FB4F14', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png'},
+    'DET': {'name': 'Lions', 'color': '#0076B6', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png'},
+    'GB': {'name': 'Packers', 'color': '#203731', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png'},
+    'HOU': {'name': 'Texans', 'color': '#03202F', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png'},
+    'IND': {'name': 'Colts', 'color': '#002C5F', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png'},
+    'JAX': {'name': 'Jaguars', 'color': '#006778', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png'},
+    'KC': {'name': 'Chiefs', 'color': '#E31837', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png'},
+    'LA': {'name': 'Rams', 'color': '#003594', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png'},
+    'LAC': {'name': 'Chargers', 'color': '#0080C6', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png'},
+    'LV': {'name': 'Raiders', 'color': '#000000', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/lv.png'},
+    'MIA': {'name': 'Dolphins', 'color': '#008E97', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/mia.png'},
+    'MIN': {'name': 'Vikings', 'color': '#4F2683', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png'},
+    'NE': {'name': 'Patriots', 'color': '#002244', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png'},
+    'NO': {'name': 'Saints', 'color': '#D3BC8D', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png'},
+    'NYG': {'name': 'Giants', 'color': '#0B2265', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png'},
+    'NYJ': {'name': 'Jets', 'color': '#125740', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png'},
+    'PHI': {'name': 'Eagles', 'color': '#004C54', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png'},
+    'PIT': {'name': 'Steelers', 'color': '#FFB612', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png'},
+    'SEA': {'name': 'Seahawks', 'color': '#002244', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png'},
+    'SF': {'name': '49ers', 'color': '#AA0000', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png'},
+    'TB': {'name': 'Buccaneers', 'color': '#D50A0A', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png'},
+    'TEN': {'name': 'Titans', 'color': '#0C2340', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png'},
+    'WAS': {'name': 'Commanders', 'color': '#5A1414', 'logo': 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png'},
+}
+
+
+# Custom CSS for compact, beautiful cards
 st.markdown("""
     <style>
     .main-header {
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: bold;
         text-align: center;
         color: #1f77b4;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
-    .matchup-card {
-        background-color: #f0f2f6;
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin: 1rem 0;
+    .game-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    .team-name {
+    .team-section {
+        text-align: center;
+        padding: 0.5rem;
+    }
+    .team-logo {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+    }
+    .team-abbr {
         font-size: 1.5rem;
         font-weight: bold;
+        color: white;
+        margin: 0.5rem 0;
     }
-    .prob-high {
-        color: #00cc00;
+    .win-prob {
+        font-size: 1.8rem;
         font-weight: bold;
+        margin: 0.25rem 0;
     }
-    .prob-low {
-        color: #cc0000;
+    .confidence-badge {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: white;
+        display: inline-block;
+        margin-top: 0.25rem;
+    }
+    .vs-text {
+        font-size: 2rem;
+        color: white;
         font-weight: bold;
-    }
-    .metric-card {
-        background-color: #e8f4f8;
-        padding: 1rem;
-        border-radius: 8px;
         text-align: center;
+        padding: 1rem 0;
+    }
+    .game-date {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -93,80 +155,8 @@ class NFLDashboard:
         
         return load_metrics(metrics_path)
     
-    def create_gauge_chart(self, value: float, title: str) -> go.Figure:
-        """Create a gauge chart for probability"""
-        fig = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=value * 100,
-            title={'text': title, 'font': {'size': 20}},
-            number={'suffix': "%", 'font': {'size': 30}},
-            gauge={
-                'axis': {'range': [0, 100], 'tickwidth': 1},
-                'bar': {'color': "#1f77b4"},
-                'bgcolor': "white",
-                'borderwidth': 2,
-                'bordercolor': "gray",
-                'steps': [
-                    {'range': [0, 50], 'color': '#ffcccc'},
-                    {'range': [50, 70], 'color': '#ffffcc'},
-                    {'range': [70, 100], 'color': '#ccffcc'}
-                ],
-                'threshold': {
-                    'line': {'color': "red", 'width': 4},
-                    'thickness': 0.75,
-                    'value': 50
-                }
-            }
-        ))
-        
-        fig.update_layout(
-            height=250,
-            margin=dict(l=20, r=20, t=50, b=20)
-        )
-        
-        return fig
-    
-    def create_probability_bar(self, home_team: str, away_team: str,
-                              home_prob: float, away_prob: float) -> go.Figure:
-        """Create horizontal bar chart for win probabilities"""
-        fig = go.Figure()
-        
-        fig.add_trace(go.Bar(
-            y=[f'{away_team} @ {home_team}'],
-            x=[home_prob * 100],
-            name=home_team,
-            orientation='h',
-            marker=dict(color='#1f77b4'),
-            text=[f'{home_prob:.1%}'],
-            textposition='inside',
-            textfont=dict(size=16, color='white')
-        ))
-        
-        fig.add_trace(go.Bar(
-            y=[f'{away_team} @ {home_team}'],
-            x=[away_prob * 100],
-            name=away_team,
-            orientation='h',
-            marker=dict(color='#ff7f0e'),
-            text=[f'{away_prob:.1%}'],
-            textposition='inside',
-            textfont=dict(size=16, color='white')
-        ))
-        
-        fig.update_layout(
-            barmode='stack',
-            height=150,
-            showlegend=True,
-            xaxis=dict(range=[0, 100], showticklabels=False),
-            yaxis=dict(showticklabels=False),
-            margin=dict(l=0, r=0, t=0, b=0),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
-        
-        return fig
-    
-    def display_matchup_card(self, game: pd.Series):
-        """Display a single game prediction card"""
+    def create_compact_matchup_card(self, game: pd.Series, col):
+        """Create a compact, beautiful matchup card"""
         home_team = game['home_team']
         away_team = game['away_team']
         home_prob = game['home_win_prob']
@@ -174,42 +164,91 @@ class NFLDashboard:
         confidence = game['confidence']
         predicted_winner = game['predicted_winner']
         
-        with st.container():
-            # Header
+        # Get team info
+        home_info = NFL_TEAMS.get(home_team, {'name': home_team, 'color': '#cccccc', 'logo': ''})
+        away_info = NFL_TEAMS.get(away_team, {'name': away_team, 'color': '#cccccc', 'logo': ''})
+        
+        with col:
+            # Create probability bar with team colors
+            home_color = home_info['color']
+            away_color = away_info['color']
+            
+            fig = go.Figure()
+            
+            fig.add_trace(go.Bar(
+                y=['Probability'],
+                x=[home_prob * 100],
+                name=home_team,
+                orientation='h',
+                marker=dict(color=home_color),
+                text=[f'{home_prob:.1%}'],
+                textposition='inside',
+                textfont=dict(size=14, color='white'),
+                hovertemplate=f'{home_team}: {home_prob:.1%}<extra></extra>'
+            ))
+            
+            fig.add_trace(go.Bar(
+                y=['Probability'],
+                x=[away_prob * 100],
+                name=away_team,
+                orientation='h',
+                marker=dict(color=away_color),
+                text=[f'{away_prob:.1%}'],
+                textposition='inside',
+                textfont=dict(size=14, color='white'),
+                hovertemplate=f'{away_team}: {away_prob:.1%}<extra></extra>'
+            ))
+            
+            fig.update_layout(
+                barmode='stack',
+                height=80,
+                showlegend=False,
+                xaxis=dict(range=[0, 100], showticklabels=False, showgrid=False),
+                yaxis=dict(showticklabels=False, showgrid=False),
+                margin=dict(l=0, r=0, t=0, b=0),
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+            )
+            
+            # Display matchup
             col1, col2, col3 = st.columns([2, 1, 2])
             
             with col1:
-                st.markdown(f"<div class='team-name'>{away_team}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='{'prob-high' if away_prob > 0.5 else 'prob-low'}'>"
-                          f"{away_prob:.1%}</div>", unsafe_allow_html=True)
+                st.markdown(f"""
+                    <div class="team-section">
+                        <img src="{away_info['logo']}" class="team-logo" />
+                        <div class="team-abbr">{away_team}</div>
+                        <div class="win-prob" style="color: {'#00ff00' if away_prob > 0.5 else '#ff6b6b'};">{away_prob:.1%}</div>
+                    </div>
+                """, unsafe_allow_html=True)
             
             with col2:
-                st.markdown("<div style='text-align: center; font-size: 2rem;'>@</div>", 
-                          unsafe_allow_html=True)
+                st.markdown('<div class="vs-text">@</div>', unsafe_allow_html=True)
             
             with col3:
-                st.markdown(f"<div class='team-name'>{home_team}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='{'prob-high' if home_prob > 0.5 else 'prob-low'}'>"
-                          f"{home_prob:.1%}</div>", unsafe_allow_html=True)
+                st.markdown(f"""
+                    <div class="team-section">
+                        <img src="{home_info['logo']}" class="team-logo" />
+                        <div class="team-abbr">{home_team}</div>
+                        <div class="win-prob" style="color: {'#00ff00' if home_prob > 0.5 else '#ff6b6b'};">{home_prob:.1%}</div>
+                    </div>
+                """, unsafe_allow_html=True)
             
             # Probability bar
-            fig = self.create_probability_bar(home_team, away_team, home_prob, away_prob)
             st.plotly_chart(fig, use_container_width=True)
             
-            # Additional info
-            col1, col2, col3 = st.columns(3)
+            # Info row
+            col_a, col_b, col_c = st.columns(3)
+            with col_a:
+                st.markdown(f"<div style='text-align:center; color:white;'><strong>Winner</strong><br/>{predicted_winner}</div>", unsafe_allow_html=True)
+            with col_b:
+                st.markdown(f"<div style='text-align:center; color:white;'><strong>Confidence</strong><br/>{confidence:.1%}</div>", unsafe_allow_html=True)
+            with col_c:
+                game_date = game.get('gameday', 'TBD')
+                if pd.notna(game_date):
+                    st.markdown(f"<div style='text-align:center; color:white;'><strong>Date</strong><br/>{game_date}</div>", unsafe_allow_html=True)
             
-            with col1:
-                st.metric("Predicted Winner", predicted_winner)
-            
-            with col2:
-                st.metric("Confidence", f"{confidence:.1%}")
-            
-            with col3:
-                if 'gameday' in game and pd.notna(game['gameday']):
-                    st.metric("Game Day", game['gameday'])
-            
-            st.divider()
+            st.markdown("---")
     
     def run(self):
         """Run the dashboard"""
@@ -243,7 +282,7 @@ class NFLDashboard:
             current_year = datetime.now().year
             season = st.number_input("Season", min_value=2010, max_value=current_year + 1,
                                     value=current_year, step=1)
-            week = st.number_input("Week", min_value=1, max_value=18, value=1, step=1)
+            week = st.number_input("Week", min_value=1, max_value=18, value=6, step=1)
             
             if st.button("🔮 Generate Predictions", type="primary"):
                 with st.spinner("Generating predictions..."):
@@ -327,14 +366,24 @@ class NFLDashboard:
         elif sort_by == "Home Team Win Prob":
             filtered_predictions = filtered_predictions.sort_values('home_win_prob', ascending=False)
         
-        # Display predictions
+        # Display predictions in 2-column layout
         st.subheader(f"🎯 Game Predictions ({len(filtered_predictions)} games)")
         
         if filtered_predictions.empty:
             st.warning("No games match the current filters.")
         else:
-            for idx, game in filtered_predictions.iterrows():
-                self.display_matchup_card(game)
+            # Display predictions 2 per row
+            for i in range(0, len(filtered_predictions), 2):
+                col1, col2 = st.columns(2)
+                
+                # First prediction in row
+                game1 = filtered_predictions.iloc[i]
+                self.create_compact_matchup_card(game1, col1)
+                
+                # Second prediction in row (if exists)
+                if i + 1 < len(filtered_predictions):
+                    game2 = filtered_predictions.iloc[i + 1]
+                    self.create_compact_matchup_card(game2, col2)
         
         # Additional visualizations
         st.divider()
@@ -379,4 +428,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -6,7 +6,7 @@ data:
   processed_dir: "data/processed"
   features_dir: "data/features"
   start_season: 2010  # Full dataset for best predictions
-  end_season: 2024
+  end_season: 2025  # Include current 2025 season
 
 # Feature Engineering
 features:
