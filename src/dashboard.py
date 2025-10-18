@@ -724,18 +724,7 @@ class NFLDashboard:
             
             fig = go.Figure()
             
-            fig.add_trace(go.Bar(
-                y=['Probability'],
-                x=[home_prob * 100],
-                name=home_team,
-                orientation='h',
-                marker=dict(color=home_color),
-                text=[f'{home_prob:.1%}'],
-                textposition='inside',
-                textfont=dict(size=14, color='white'),
-                hovertemplate=f'{home_team}: {home_prob:.1%}<extra></extra>'
-            ))
-            
+            # Add away team bar first (left side)
             fig.add_trace(go.Bar(
                 y=['Probability'],
                 x=[away_prob * 100],
@@ -746,6 +735,19 @@ class NFLDashboard:
                 textposition='inside',
                 textfont=dict(size=14, color='white'),
                 hovertemplate=f'{away_team}: {away_prob:.1%}<extra></extra>'
+            ))
+            
+            # Add home team bar second (right side)
+            fig.add_trace(go.Bar(
+                y=['Probability'],
+                x=[home_prob * 100],
+                name=home_team,
+                orientation='h',
+                marker=dict(color=home_color),
+                text=[f'{home_prob:.1%}'],
+                textposition='inside',
+                textfont=dict(size=14, color='white'),
+                hovertemplate=f'{home_team}: {home_prob:.1%}<extra></extra>'
             ))
             
             fig.update_layout(
