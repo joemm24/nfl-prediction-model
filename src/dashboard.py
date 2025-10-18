@@ -65,9 +65,10 @@ NFL_TEAMS = {
 }
 
 
-# Custom CSS for compact, beautiful cards
+# Custom CSS for responsive, mobile-optimized design
 st.markdown("""
     <style>
+    /* Main Header - Responsive */
     .main-header {
         font-size: 2.5rem;
         font-weight: bold;
@@ -75,6 +76,80 @@ st.markdown("""
         color: #1f77b4;
         margin-bottom: 1rem;
     }
+    
+    /* Mobile Optimization */
+    @media only screen and (max-width: 768px) {
+        .main-header {
+            font-size: 1.8rem;
+        }
+        
+        /* Make sidebar collapsible on mobile */
+        section[data-testid="stSidebar"] {
+            width: 100% !important;
+        }
+        
+        /* Adjust column spacing */
+        .row-widget.stHorizontal {
+            flex-direction: column !important;
+        }
+        
+        /* Stack columns on mobile */
+        div[data-testid="column"] {
+            width: 100% !important;
+            flex: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Larger touch targets for mobile */
+        button {
+            min-height: 48px !important;
+            font-size: 1rem !important;
+        }
+        
+        /* Adjust logo sizes for mobile */
+        .team-logo-mobile {
+            width: 50px !important;
+            height: 50px !important;
+        }
+        
+        /* Smaller fonts on mobile */
+        .team-abbr {
+            font-size: 1.2rem !important;
+        }
+        
+        .win-prob {
+            font-size: 1.4rem !important;
+        }
+        
+        .vs-text {
+            font-size: 1.5rem !important;
+            padding: 0.5rem 0 !important;
+        }
+        
+        /* Reduce padding on mobile */
+        .detail-section {
+            padding: 1rem !important;
+        }
+        
+        /* Make expanders easier to tap */
+        .streamlit-expanderHeader {
+            min-height: 48px !important;
+        }
+    }
+    
+    /* Tablet Optimization */
+    @media only screen and (min-width: 769px) and (max-width: 1024px) {
+        .main-header {
+            font-size: 2rem;
+        }
+        
+        .team-logo {
+            width: 55px;
+            height: 55px;
+        }
+    }
+    
+    /* Game Card Styles */
     .game-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 12px;
@@ -84,30 +159,36 @@ st.markdown("""
         cursor: pointer;
         transition: transform 0.2s;
     }
+    
     .game-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
+    
     .team-section {
         text-align: center;
         padding: 0.5rem;
     }
+    
     .team-logo {
         width: 60px;
         height: 60px;
         margin: 0 auto;
     }
+    
     .team-abbr {
         font-size: 1.5rem;
         font-weight: bold;
         color: white;
         margin: 0.5rem 0;
     }
+    
     .win-prob {
         font-size: 1.8rem;
         font-weight: bold;
         margin: 0.25rem 0;
     }
+    
     .vs-text {
         font-size: 2rem;
         color: white;
@@ -115,11 +196,47 @@ st.markdown("""
         text-align: center;
         padding: 1rem 0;
     }
+    
     .detail-section {
         background-color: #f8f9fa;
         border-radius: 8px;
         padding: 1.5rem;
         margin-top: 1rem;
+    }
+    
+    /* Responsive images */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Better scrolling on mobile */
+    .element-container {
+        overflow-x: hidden;
+    }
+    
+    /* Mobile-friendly metrics */
+    @media only screen and (max-width: 768px) {
+        div[data-testid="stMetricValue"] {
+            font-size: 1.2rem !important;
+        }
+        
+        div[data-testid="stMetricLabel"] {
+            font-size: 0.9rem !important;
+        }
+    }
+    
+    /* Touch-friendly inputs */
+    input, select, textarea {
+        min-height: 44px !important;
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+    
+    /* Responsive table */
+    @media only screen and (max-width: 768px) {
+        table {
+            font-size: 0.8rem !important;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -532,17 +649,18 @@ class NFLDashboard:
         # Rate limiting
         rate_limiter = RateLimiter(max_requests=10, window_minutes=60)
         
-        # Header with user info
-        col_head1, col_head2 = st.columns([3, 1])
-        with col_head1:
-            st.markdown("<h1 class='main-header'>🏈 NFL Game Predictions</h1>", 
-                       unsafe_allow_html=True)
-        with col_head2:
-            st.markdown(f"""
-                <div style='text-align: right; padding-top: 1rem;'>
-                    <div style='color: #666; font-size: 0.9rem;'>👤 {auth.get_username()}</div>
+        # Header with user info (responsive)
+        st.markdown("<h1 class='main-header'>🏈 NFL Game Predictions</h1>", 
+                   unsafe_allow_html=True)
+        
+        # User info badge (centered on mobile, right on desktop)
+        st.markdown(f"""
+            <div style='text-align: center; margin-bottom: 1rem;'>
+                <div style='display: inline-block; background-color: #f0f2f6; padding: 0.5rem 1rem; border-radius: 20px;'>
+                    <span style='color: #666; font-size: 0.9rem;'>👤 {auth.get_username()}</span>
                 </div>
-            """, unsafe_allow_html=True)
+            </div>
+        """, unsafe_allow_html=True)
         
         # Sidebar
         with st.sidebar:
@@ -652,26 +770,27 @@ class NFLDashboard:
             
             return
         
-        # Display summary
+        # Display summary (responsive: 4 columns on desktop, 2 on mobile via CSS)
         st.subheader(f"📊 Week {predictions['week'].iloc[0]} Predictions "
                     f"({predictions['season'].iloc[0]} Season)")
         
+        # Metrics with responsive layout
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("Total Games", len(predictions))
+            st.metric("🎮 Total Games", len(predictions))
         
         with col2:
             avg_confidence = predictions['confidence'].mean()
-            st.metric("Avg Confidence", f"{avg_confidence:.1%}")
+            st.metric("📊 Avg Confidence", f"{avg_confidence:.1%}")
         
         with col3:
             high_conf = (predictions['confidence'] > 0.3).sum()
-            st.metric("High Confidence Games", high_conf)
+            st.metric("✅ High Confidence", high_conf)
         
         with col4:
             close_games = (predictions['confidence'] < 0.1).sum()
-            st.metric("Toss-up Games", close_games)
+            st.metric("🤷 Toss-ups", close_games)
         
         st.divider()
         

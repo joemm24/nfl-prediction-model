@@ -30,3 +30,11 @@ font = "sans serif"
 toolbarMode = "minimal"
 showErrorDetails = false
 
+[runner]
+# Faster reloads for mobile testing
+fastReruns = true
+
+[logger]
+# Less verbose logging for production
+level = "warning"
+
