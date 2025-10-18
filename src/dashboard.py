@@ -16,6 +16,7 @@ from datetime import datetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.utils import load_config, load_metrics
 from src.predict import NFLPredictor
+from src.auth import AuthManager, RateLimiter
 
 
 # Page configuration
@@ -522,13 +523,46 @@ class NFLDashboard:
     
     def run(self):
         """Run the dashboard"""
-        # Header
-        st.markdown("<h1 class='main-header'>🏈 NFL Game Predictions</h1>", 
-                   unsafe_allow_html=True)
+        # Authentication
+        auth = AuthManager()
+        if not auth.is_authenticated():
+            auth.show_login_page()
+            return
+        
+        # Rate limiting
+        rate_limiter = RateLimiter(max_requests=10, window_minutes=60)
+        
+        # Header with user info
+        col_head1, col_head2 = st.columns([3, 1])
+        with col_head1:
+            st.markdown("<h1 class='main-header'>🏈 NFL Game Predictions</h1>", 
+                       unsafe_allow_html=True)
+        with col_head2:
+            st.markdown(f"""
+                <div style='text-align: right; padding-top: 1rem;'>
+                    <div style='color: #666; font-size: 0.9rem;'>👤 {auth.get_username()}</div>
+                </div>
+            """, unsafe_allow_html=True)
         
         # Sidebar
         with st.sidebar:
             st.header("⚙️ Settings")
+            
+            # User session info
+            st.markdown(f"""
+                <div style='background-color: #f0f2f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;'>
+                    <div style='font-size: 0.9rem;'><strong>👤 User:</strong> {auth.get_username()}</div>
+                    <div style='font-size: 0.8rem; color: #666; margin-top: 0.5rem;'>
+                        Session: {auth.get_session_duration().seconds // 60 if auth.get_session_duration() else 0} min
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("🚪 Logout", use_container_width=True):
+                auth.logout()
+                st.rerun()
+            
+            st.divider()
             
             # Model info
             st.subheader("Model Information")
@@ -555,13 +589,27 @@ class NFLDashboard:
             week = st.number_input("Week", min_value=1, max_value=18, value=6, step=1)
             
             if st.button("🔮 Generate Predictions", type="primary"):
-                with st.spinner("Generating predictions..."):
-                    try:
-                        predictions = self.predictor.predict(season, week)
-                        st.success(f"Generated {len(predictions)} predictions!")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Error: {str(e)}")
+                # Check rate limit
+                can_request, remaining = rate_limiter.can_make_request()
+                
+                if not can_request:
+                    reset_time = rate_limiter.get_reset_time()
+                    st.error(f"⛔ Rate limit exceeded. You can make {rate_limiter.max_requests} predictions per hour. Try again later.")
+                    if reset_time:
+                        st.info(f"Rate limit resets at: {reset_time.strftime('%H:%M:%S')}")
+                else:
+                    # Show remaining requests
+                    if remaining <= 3:
+                        st.warning(f"⚠️ {remaining} predictions remaining this hour")
+                    
+                    with st.spinner("Generating predictions..."):
+                        try:
+                            predictions = self.predictor.predict(season, week)
+                            rate_limiter.record_request()
+                            st.success(f"✅ Generated {len(predictions)} predictions! ({remaining - 1} remaining)")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"❌ Error: {str(e)}")
             
             st.divider()
             
