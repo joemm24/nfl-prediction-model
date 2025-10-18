@@ -6,8 +6,11 @@ Handles user authentication and session management
 import streamlit as st
 import hmac
 import hashlib
+import json
+import base64
 from datetime import datetime, timedelta
 from typing import Optional, Dict
+import time
 
 
 class AuthManager:
@@ -29,6 +32,60 @@ class AuthManager:
             st.session_state.last_attempt_time = None
         if 'session_start_time' not in st.session_state:
             st.session_state.session_start_time = None
+        if 'session_token' not in st.session_state:
+            st.session_state.session_token = None
+        
+        # Try to restore session from URL parameters or cookies
+        self._restore_session()
+    
+    def _create_session_token(self, username: str) -> str:
+        """Create a secure session token"""
+        session_data = {
+            'username': username,
+            'timestamp': time.time(),
+            'expires': time.time() + (24 * 60 * 60)  # 24 hours
+        }
+        token_data = json.dumps(session_data)
+        encoded_token = base64.b64encode(token_data.encode()).decode()
+        return encoded_token
+    
+    def _validate_session_token(self, token: str) -> Optional[str]:
+        """Validate session token and return username if valid"""
+        try:
+            decoded_data = base64.b64decode(token.encode()).decode()
+            session_data = json.loads(decoded_data)
+            
+            # Check if token is expired
+            if time.time() > session_data['expires']:
+                return None
+            
+            return session_data['username']
+        except:
+            return None
+    
+    def _restore_session(self):
+        """Try to restore session from URL parameters"""
+        try:
+            # Check URL parameters for session token
+            query_params = st.query_params
+            if 'token' in query_params:
+                token = query_params['token']
+                username = self._validate_session_token(token)
+                if username:
+                    st.session_state.authenticated = True
+                    st.session_state.username = username
+                    st.session_state.session_token = token
+                    st.session_state.session_start_time = datetime.now()
+        except:
+            pass
+    
+    def _persist_session(self):
+        """Persist session to URL parameters"""
+        if st.session_state.authenticated and st.session_state.session_token:
+            try:
+                st.query_params.token = st.session_state.session_token
+            except:
+                pass
     
     def get_users(self) -> Dict[str, str]:
         """
@@ -101,6 +158,11 @@ class AuthManager:
             st.session_state.username = username
             st.session_state.login_attempts = 0
             st.session_state.session_start_time = datetime.now()
+            
+            # Create and persist session token
+            st.session_state.session_token = self._create_session_token(username)
+            self._persist_session()
+            
             return True
         else:
             st.session_state.login_attempts += 1
@@ -115,6 +177,14 @@ class AuthManager:
         st.session_state.authenticated = False
         st.session_state.username = None
         st.session_state.session_start_time = None
+        st.session_state.session_token = None
+        
+        # Clear URL parameters
+        try:
+            if 'token' in st.query_params:
+                del st.query_params.token
+        except:
+            pass
     
     def is_authenticated(self) -> bool:
         """Check if user is authenticated"""

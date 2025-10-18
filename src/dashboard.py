@@ -192,9 +192,55 @@ st.markdown("""
     .vs-text {
         font-size: 2rem;
         color: white;
-        font-weight: bold;
         text-align: center;
-        padding: 1rem 0;
+        margin: 1rem 0;
+    }
+    
+    /* Mobile-optimized horizontal team layout */
+    @media only screen and (max-width: 768px) {
+        .team-section {
+            padding: 0.25rem;
+        }
+        
+        .team-logo {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .team-abbr {
+            font-size: 1.2rem;
+            margin: 0.25rem 0;
+        }
+        
+        .win-prob {
+            font-size: 1.4rem;
+            margin-top: 0.25rem;
+        }
+        
+        .vs-text {
+            font-size: 1.5rem !important;
+            margin: 0.5rem 0 !important;
+        }
+    }
+    
+    /* Ultra-compact mobile layout for very small screens */
+    @media only screen and (max-width: 480px) {
+        .team-logo {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .team-abbr {
+            font-size: 1rem;
+        }
+        
+        .win-prob {
+            font-size: 1.2rem;
+        }
+        
+        .vs-text {
+            font-size: 1.2rem !important;
+        }
     }
     
     .detail-section {
@@ -713,8 +759,8 @@ class NFLDashboard:
                 plot_bgcolor='rgba(0,0,0,0)',
             )
             
-            # Display matchup
-            col1, col2, col3 = st.columns([2, 1, 2])
+            # Display matchup - Mobile-optimized horizontal layout
+            col1, col2, col3 = st.columns([2.5, 1, 2.5])
             
             with col1:
                 st.markdown(f"""
@@ -767,6 +813,9 @@ class NFLDashboard:
         if not auth.is_authenticated():
             auth.show_login_page()
             return
+        
+        # Persist session to prevent logout on refresh
+        auth._persist_session()
         
         # Rate limiting
         rate_limiter = RateLimiter(max_requests=10, window_minutes=60)
