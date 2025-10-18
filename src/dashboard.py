@@ -196,6 +196,14 @@ st.markdown("""
         margin: 1rem 0;
     }
     
+    .matchup-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin: 1rem 0;
+    }
+    
     /* Mobile-optimized horizontal team layout */
     @media only screen and (max-width: 768px) {
         .team-section {
@@ -219,7 +227,36 @@ st.markdown("""
         
         .vs-text {
             font-size: 1.5rem !important;
-            margin: 0.5rem 0 !important;
+            margin: 0 0.5rem !important;
+        }
+        
+        /* Ensure matchup container is horizontal on mobile */
+        .matchup-container {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+        }
+        
+        .matchup-container .vs-text {
+            margin: 0 0.5rem !important;
+        }
+        
+        /* Force horizontal layout on mobile using JavaScript */
+        .mobile-horizontal {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+        }
+        
+        .mobile-horizontal > div {
+            flex: 1 !important;
+            margin: 0 0.25rem !important;
+        }
+        
+        .mobile-horizontal > div:nth-child(2) {
+            flex: 0 0 auto !important;
+            text-align: center !important;
         }
     }
     
@@ -240,6 +277,11 @@ st.markdown("""
         
         .vs-text {
             font-size: 1.2rem !important;
+        }
+        
+        /* Even more compact spacing */
+        .stColumns > div > div {
+            margin: 0 0.1rem !important;
         }
     }
     
@@ -761,29 +803,22 @@ class NFLDashboard:
                 plot_bgcolor='rgba(0,0,0,0)',
             )
             
-            # Display matchup - Mobile-optimized horizontal layout
-            col1, col2, col3 = st.columns([2.5, 1, 2.5])
-            
-            with col1:
-                st.markdown(f"""
+            # Display matchup - Use custom HTML for better mobile control
+            st.markdown(f"""
+                <div class="matchup-container">
                     <div class="team-section">
                         <img src="{away_info['logo']}" class="team-logo" />
                         <div class="team-abbr">{away_team}</div>
                         <div class="win-prob" style="color: {'#00ff00' if away_prob > 0.5 else '#ff6b6b'};">{away_prob:.1%}</div>
                     </div>
-                """, unsafe_allow_html=True)
-            
-            with col2:
-                st.markdown('<div class="vs-text">@</div>', unsafe_allow_html=True)
-            
-            with col3:
-                st.markdown(f"""
+                    <div class="vs-text">@</div>
                     <div class="team-section">
                         <img src="{home_info['logo']}" class="team-logo" />
                         <div class="team-abbr">{home_team}</div>
                         <div class="win-prob" style="color: {'#00ff00' if home_prob > 0.5 else '#ff6b6b'};">{home_prob:.1%}</div>
                     </div>
-                """, unsafe_allow_html=True)
+                </div>
+            """, unsafe_allow_html=True)
             
             # Probability bar
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
