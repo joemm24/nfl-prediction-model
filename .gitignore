@@ -42,10 +42,11 @@ data/processed/*.parquet
 data/features/*.csv
 data/features/*.parquet
 
-# Keep directory structure
+# Keep directory structure and essential files
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/features/.gitkeep
+!data/features/features_essential.csv
 
 # Models
 models/*.pkl
