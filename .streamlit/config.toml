@@ -1,0 +1,32 @@
+# Streamlit Configuration for Production
+
+[server]
+# Security
+enableXsrfProtection = true
+enableCORS = false
+maxUploadSize = 10
+
+# Performance
+headless = true
+port = 8501
+address = "0.0.0.0"
+
+[browser]
+# Prevent automatic browser opening
+gatherUsageStats = false
+serverAddress = "0.0.0.0"
+serverPort = 8501
+
+[theme]
+# Custom theme (optional - matches NFL aesthetic)
+primaryColor = "#FF6B35"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#262730"
+textColor = "#FAFAFA"
+font = "sans serif"
+
+[client]
+# Toolbar settings
+toolbarMode = "minimal"
+showErrorDetails = false
+

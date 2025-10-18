@@ -91,4 +91,9 @@ ehthumbs.db
 Desktop.ini
 
 # Streamlit
-.streamlit/
+.streamlit/secrets.toml
+.streamlit/credentials.toml
+
+# Keep streamlit config
+!.streamlit/config.toml
+!.streamlit/secrets.toml.example
